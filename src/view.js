@@ -1,4 +1,14 @@
 export default class View {
+    static colors = {
+        'I': 'cyan',
+        'J': 'blue',
+        'L': 'orange',
+        'O': 'yellow',
+        'S': 'green',
+        'T': 'purple',
+        'Z': 'red'
+    };
+
     constructor({ element, width, height, rows, columns }) {
         this.element = element;
         this.width = width;
@@ -8,8 +18,6 @@ export default class View {
         this.canvas.height = this.height;
         this.context = this.canvas.getContext('2d');
 
-        this.x = 0;
-        this.y = 0;
         this.gridBorderWidth = 4;
         this.gridX = this.gridBorderWidth;
         this.gridY = this.gridBorderWidth;
@@ -71,7 +79,7 @@ export default class View {
 
     _clearScreen(color = 'black') {
         this.context.fillStyle = color;
-        this.context.fillRect(this.x, this.y, this.width, this.height);
+        this.context.fillRect(0, 0, this.width, this.height);
     }
 
     _renderBorder() {
@@ -93,7 +101,7 @@ export default class View {
                         y: this.gridY + (y * this.blockHeight),
                         width: this.blockWidth,
                         height: this.blockHeight,
-                        color: block.color
+                        color: View.colors[block.type]
                     });
                 }
             }
@@ -128,7 +136,7 @@ export default class View {
                     y: y + (block.y * height),
                     width,
                     height,
-                    color: block.color
+                    color: View.colors[block.type]
                 });
             }
         }

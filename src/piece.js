@@ -1,45 +1,52 @@
 export default class Piece {
+    static types = 'IJLOSTZ';
+
     static createPiece(type) {
+        if (!type) {
+            const index = Math.floor(Math.random() * this.types.length);
+            type = this.types[index];
+        }
+
         switch (type) {
-            case 'I': return new Piece('I', 'cyan', [
+            case 'I': return new Piece('I', [
                 [0,0,0,0],
                 [1,1,1,1],
                 [0,0,0,0],
                 [0,0,0,0]
             ]);
 
-            case 'J': return new Piece('J', 'blue', [
+            case 'J': return new Piece('J', [
                 [0,0,0],
                 [1,1,1],
                 [0,0,1]
             ]);
 
-            case 'L': return new Piece('L', 'orange', [
+            case 'L': return new Piece('L', [
                 [0,0,0],
                 [1,1,1],
                 [1,0,0]
             ]);
 
-            case 'O': return new Piece('O', 'yellow', [
+            case 'O': return new Piece('O', [
                 [0,0,0,0],
                 [0,1,1,0],
                 [0,1,1,0],
                 [0,0,0,0]
             ]);
 
-            case 'S': return new Piece('S', 'green', [
+            case 'S': return new Piece('S', [
                 [0,0,0],
                 [0,1,1],
                 [1,1,0]
             ]);
 
-            case 'T': return new Piece('T', 'purple', [
+            case 'T': return new Piece('T', [
                 [0,0,0],
                 [1,1,1],
                 [0,1,0]
             ]);
 
-            case 'Z': return new Piece('Z', 'red', [
+            case 'Z': return new Piece('Z', [
                 [0,0,0],
                 [1,1,0],
                 [0,1,1]
@@ -49,19 +56,12 @@ export default class Piece {
         }
     }
 
-    static createRandomPiece() {
-        const types = 'IJLOSTZ';
-        const index = Math.floor(Math.random() * types.length);
-    
-        return Piece.createPiece(types[index]);
-    }
+    x = 0;
+    y = 0;
 
-    constructor(type, color, blocks) {
-        this.type = type,
-        this.color = color;
+    constructor(type, blocks) {
+        this.type = type;
         this.blocks = blocks;
-        this.x = 0;
-        this.y = 0;
     }
 
     get width() {
@@ -103,7 +103,7 @@ export default class Piece {
                 yield this.blocks[y][x] === 1 ? {
                     x: this.x + x,
                     y: this.y + y,
-                    color: this.color
+                    type: this.type
                 } : null;
             }
         }

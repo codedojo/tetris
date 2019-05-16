@@ -9,15 +9,16 @@ export default class Game {
         '4': 1200
     };
 
+    score = 0;
+    lines = 0;
+    topOut = false;
+    activePiece = null;
+    nextPiece = null;
+
     constructor(rows, columns) {
         this._grid = new Grid(rows, columns);
-        this.score = 0;
-        this.lines = 0;
-        this.topOut = false;
-        this.activePiece = null;
-        this.nextPiece = null;
 
-        this._updatePiece();
+        this._updatePieces();
     }
 
     get level() {
@@ -67,9 +68,7 @@ export default class Game {
 
         if (this._grid.hasCollision(this.activePiece)) {
             this.activePiece.y -= 1;
-            this._updateGrid();
-            this._updateScore();
-            this._updatePiece();
+            this._update();
         }
     }
 
@@ -78,6 +77,16 @@ export default class Game {
 
         if (this._grid.hasCollision(this.activePiece)) {
             this.activePiece.rotate(false);
+        }
+    }
+
+    _update() {
+        this._updateGrid();
+        this._updateScore();
+        this._updatePieces();
+
+        if (this._grid.hasCollision(this.activePiece)) {
+            this.topOut = true;
         }
     }
 
@@ -94,15 +103,11 @@ export default class Game {
         }
     }
 
-    _updatePiece() {
-        this.activePiece = this.nextPiece ? this.nextPiece : Piece.createRandomPiece();
-        this.nextPiece = Piece.createRandomPiece();
+    _updatePieces() {
+        this.activePiece = this.nextPiece ? this.nextPiece : Piece.createPiece();
+        this.nextPiece = Piece.createPiece();
         
         this.activePiece.x = Math.floor((this._grid.columns - this.activePiece.width) / 2);
         this.activePiece.y = -1;
-
-        if (this._grid.hasCollision(this.activePiece)) {
-            this.topOut = true;
-        }
     }
 }

@@ -32,9 +32,9 @@ export default class Grid extends Array {
     }
 
     clearLines() {
-        const lines = this._getLinesToRemove();
+        const linesToRemove = this._getLinesToRemove();
 
-        return this._removeLines(lines);
+        return this._removeLines(linesToRemove);
     }
 
     _getLinesToRemove() {
