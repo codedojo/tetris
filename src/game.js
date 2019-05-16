@@ -1,4 +1,4 @@
-import Grid from './grid.js';
+import Playfield from './playfield.js';
 import Piece from './piece.js';
 
 export default class Game {
@@ -9,75 +9,43 @@ export default class Game {
         '4': 1200
     };
 
-    score = 0;
-    lines = 0;
-    topOut = false;
-    activePiece = null;
-    nextPiece = null;
+    _score = 0;
+    _lines = 0;
+    _topOut = false;
+    _nextPiece = null;
 
     constructor(rows, columns) {
-        this._grid = new Grid(rows, columns);
-
-        this._updatePieces();
+        this._playfield = new Playfield(rows, columns, Piece.create());
+        this._nextPiece = Piece.create();
     }
 
-    get level() {
-        return Math.floor(this.lines * 0.1);
+    get state() {
+        return {
+            score: this._score,
+            lines: this._lines,
+            level: Math.floor(this._lines * 0.1),
+            playfield: this._playfield.state,
+            nextPiece: this._nextPiece,
+            isGameOver: this._topOut
+        };
     }
 
-    get grid() {
-        const grid = [];
-
-        for (let y = 0; y < this._grid.rows; y++) {
-            grid[y] = [];
-
-            for (let x = 0; x < this._grid.columns; x++) {
-                grid[y][x] = this._grid[y][x];
-            }
-        }
-
-        for (let block of this.activePiece) {
-            if (block) {
-                grid[block.y][block.x] = block;
-            }
-        }
-
-        return grid;
+    moveLeft() {
+        this._playfield.movePieceLeft();
     }
 
-    movePieceLeft() {
-        this.activePiece.x -= 1;
-
-        if (this._grid.hasCollision(this.activePiece)) {
-            this.activePiece.x += 1;
-        }
+    moveRight() {
+        this._playfield.movePieceRight();
     }
 
-    movePieceRight() {
-        this.activePiece.x += 1;
-
-        if (this._grid.hasCollision(this.activePiece)) {
-            this.activePiece.x -= 1;
-        }
-    }
-
-    movePieceDown() {
-        if (this.topOut) return;
-
-        this.activePiece.y += 1;
-
-        if (this._grid.hasCollision(this.activePiece)) {
-            this.activePiece.y -= 1;
+    moveDown() {
+        if (!this._playfield.movePieceDown()) {
             this._update();
         }
     }
 
-    rotatePiece() {
-        this.activePiece.rotate();
-
-        if (this._grid.hasCollision(this.activePiece)) {
-            this.activePiece.rotate(false);
-        }
+    rotate() {
+        this._playfield.rotatePiece();
     }
 
     _update() {
@@ -85,29 +53,26 @@ export default class Game {
         this._updateScore();
         this._updatePieces();
 
-        if (this._grid.hasCollision(this.activePiece)) {
+        if (this._playfield.hasCollision()) {
             this.topOut = true;
         }
     }
 
     _updateGrid() {
-        this._grid.lockPiece(this.activePiece);
+        this._playfield.lockPiece();
     }
 
     _updateScore() {
-        const clearedLines = this._grid.clearLines();
+        const clearedLines = this._playfield.clearLines();
 
         if (clearedLines > 0) {
-            this.score += Game.points[clearedLines] * (this.level + 1);
-            this.lines += clearedLines;
+            this._score += Game.points[clearedLines] * (this._level + 1);
+            this._lines += clearedLines;
         }
     }
 
     _updatePieces() {
-        this.activePiece = this.nextPiece ? this.nextPiece : Piece.createPiece();
-        this.nextPiece = Piece.createPiece();
-        
-        this.activePiece.x = Math.floor((this._grid.columns - this.activePiece.width) / 2);
-        this.activePiece.y = -1;
+        this._playfield.piece = this._nextPiece;
+        this._nextPiece = Piece.create();
     }
 }

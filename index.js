@@ -16,3 +16,4 @@ const view = new View({
     columns: GRID_COLUMNS
 });
 const controller = new Controller(game, view);
+console.log(game, view, controller)

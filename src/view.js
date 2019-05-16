@@ -10,9 +10,9 @@ export default class View {
     };
 
     constructor({ element, width, height, rows, columns }) {
-        this.element = element;
         this.width = width;
         this.height = height;
+        
         this.canvas = document.createElement('canvas');
         this.canvas.width = this.width;
         this.canvas.height = this.height;
@@ -34,7 +34,7 @@ export default class View {
         this.panelWidth = this.width / 3;
         this.panelHeight = this.height;
 
-        this.element.appendChild(this.canvas);
+        element.appendChild(this.canvas);
     }
 
     on(event, handler) {
@@ -49,10 +49,10 @@ export default class View {
         this.context.fillText('Press ENTER to Start', this.width / 2, this.height / 2);
     }
 
-    renderMainScreen(viewModel) {
+    renderMainScreen(state) {
         this._clearScreen();
-        this._renderGrid(viewModel);
-        this._renderPanel(viewModel);
+        this._renderPlayfield(state);
+        this._renderPanel(state);
         this._renderBorder();
     }
 
@@ -88,12 +88,12 @@ export default class View {
         this.context.strokeRect(0, 0, this.gridWidth, this.gridHeight);
     }
 
-    _renderGrid({ grid }) {
-        for (let y = 0; y < grid.length; y++) {
-            const line = grid[y];
+    _renderPlayfield({ playfield }) {
+        for (let y = 0; y < playfield.length; y++) {
+            const line = playfield[y];
 
             for (let x = 0; x < line.length; x++) {
-                const block = grid[y][x];
+                const block = playfield[y][x];
                 
                 if (block) {
                     this._renderBlock({

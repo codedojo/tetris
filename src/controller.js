@@ -14,21 +14,8 @@ export default class Controller {
         this._view.renderStartScreen();
     }
 
-    get viewModel() {
-        const game = this._game;
-
-        return {
-            grid: game.grid,
-            nextPiece: game.nextPiece,
-            isGameOver: game.topOut,
-            score: game.score,
-            level: game.level,
-            lines: game.lines
-        };
-    }
-
     update() {
-        this._game.movePieceDown();
+        this._game.moveDown();
         this._updateView();
     }
 
@@ -45,19 +32,19 @@ export default class Controller {
     }
 
     _updateView() {
-        const viewModel = this.viewModel;
+        const state = this._game.state;
         
-        if (viewModel.isGameOver) {
-            this._view.renderEndScreen(viewModel);
+        if (state.isGameOver) {
+            this._view.renderEndScreen(state);
         } else if (!this._isPlaying) {
-            this._view.renderPauseScreen(viewModel);
+            this._view.renderPauseScreen(state);
         } else {
-            this._view.renderMainScreen(viewModel);
+            this._view.renderMainScreen(state);
         }
     }
 
     _startTimer() {
-        const speed = 1000 - this._game.level * 100;
+        const speed = 1000 - this._game.state.level * 100;
         
         if (!this._interval) {
             this._interval = setInterval(() => {
@@ -88,20 +75,20 @@ export default class Controller {
     _handleKeyDown(event) {
         switch (event.keyCode) {
             case 37: // LEFT ARROW
-                this._game.movePieceLeft();
+                this._game.moveLeft();
                 this._updateView();
                 break;
             case 38: // UP ARROW
-                this._game.rotatePiece();
+                this._game.rotate();
                 this._updateView();
                 break;
             case 39: // RIGHT ARROW
-                this._game.movePieceRight();
+                this._game.moveRight();
                 this._updateView();
                 break;
             case 40: // DOWN ARROW
                 this._stopTimer();
-                this._game.movePieceDown();
+                this._game.moveDown();
                 this._updateView();
                 break;
         }

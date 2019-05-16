@@ -1,7 +1,7 @@
 export default class Piece {
     static types = 'IJLOSTZ';
 
-    static createPiece(type) {
+    static create(type) {
         if (!type) {
             const index = Math.floor(Math.random() * this.types.length);
             type = this.types[index];
