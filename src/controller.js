@@ -14,19 +14,6 @@ export default class Controller {
         this._view.renderStartScreen();
     }
 
-    get viewModel() {
-        const game = this._game;
-
-        return {
-            playfield: game.playfield,
-            nextPiece: game.nextPiece,
-            isGameOver: game.topOut,
-            score: game.score,
-            level: game.level,
-            lines: game.lines
-        };
-    }
-
     update() {
         this._game.movePieceDown();
         this._updateView();
@@ -44,15 +31,20 @@ export default class Controller {
         this._updateView();
     }
 
+    reset() {
+        this._game.reset();
+        this.play();
+    }
+
     _updateView() {
-        const viewModel = this.viewModel;
+        const state = this._game.state;
         
-        if (viewModel.isGameOver) {
-            this._view.renderEndScreen(viewModel);
+        if (state.isGameOver) {
+            this._view.renderEndScreen(state);
         } else if (!this._isPlaying) {
-            this._view.renderPauseScreen(viewModel);
+            this._view.renderPauseScreen(state);
         } else {
-            this._view.renderMainScreen(viewModel);
+            this._view.renderMainScreen(state);
         }
     }
 
@@ -76,7 +68,10 @@ export default class Controller {
     _handleKeyPress(event) {
         switch (event.keyCode) {
             case 13: // ENTER
-                if (this._isPlaying) {
+                if (this._game.state.isGameOver) {
+                    console.log(this._game.state)
+                    this.reset();
+                } else if (this._isPlaying) {
                     this.pause();
                 } else {
                     this.play();
