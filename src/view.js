@@ -50,10 +50,10 @@ export default class View {
         this.context.fillText('Press ENTER to Start', this.width / 2, this.height / 2);
     }
 
-    renderMainScreen(viewModel) {
+    renderMainScreen(state) {
         this._clearScreen();
-        this._renderPlayfield(viewModel);
-        this._renderPanel(viewModel);
+        this._renderPlayfield(state);
+        this._renderPanel(state);
         this._renderBorder();
     }
 
@@ -77,6 +77,7 @@ export default class View {
         this.context.textBaseline = 'middle';
         this.context.fillText('GAME OVER', this.width / 2, this.height / 2 - 48);
         this.context.fillText(`Score: ${score}`, this.width / 2, this.height / 2);
+        this.context.fillText('Press ENTER to Restart', this.width / 2, this.height / 2 + 48);
     }
 
     _clearScreen(color = 'black') {
@@ -90,7 +91,7 @@ export default class View {
         this.context.strokeRect(0, 0, this.playfieldWidth, this.playfieldHeight);
     }
 
-    _renderPlayfield({ playfield }) {
+    _renderPlayfield({ playfield, activePiece }) {
         for (let y = 0; y < playfield.length; y++) {
             const line = playfield[y];
 
@@ -108,6 +109,13 @@ export default class View {
                 }
             }
         }
+
+        this._renderPiece(activePiece, {
+            x: this.playfieldX,
+            y: this.playfieldY,
+            width: this.blockWidth,
+            height: this.blockHeight
+        });
     }
 
     _renderPanel({ level, score, lines, nextPiece }) {
@@ -147,17 +155,7 @@ export default class View {
         this.context.fillStyle = color;
         this.context.strokeStyle = 'black';
         this.context.lineWidth = lineWidth;
-
         this.context.fillRect(x, y, width, height);
         this.context.strokeRect(x, y, width, height);
-    }
-
-    _renderText(string, { x, y, font, color, align, baseline }) {
-        if (font) this.context.textAlign = font;
-        if (color) this.context.fillStyle = color;
-        if (align) this.context.textAlign = align;
-        if (baseline) this.context.textBaseline = baseline;
-
-        this.context.fillText(string, x, y);
     }
 }
