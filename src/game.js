@@ -9,74 +9,73 @@ export default class Game {
         '4': 1200
     };
 
-    score = 0;
-    lines = 0;
-    topOut = false;
-    activePiece = null;
-    nextPiece = null;
+    _score = 0;
+    _lines = 0;
+    _topOut = false;
+    _activePiece = null;
+    _nextPiece = null;
 
     constructor(rows, columns) {
         this._playfield = new Playfield(rows, columns);
-
         this._updatePieces();
     }
 
     get level() {
-        return Math.floor(this.lines * 0.1);
+        return Math.floor(this._lines * 0.1);
     }
 
-    get playfield() {
-        const playfield = [];
+    get state() {
+        return {
+            score: this._score,
+            level: this.level,
+            lines: this._lines,
+            playfield: this._playfield,
+            activePiece: this._activePiece,
+            nextPiece: this._nextPiece,
+            isGameOver: this._topOut
+        };
+    }
 
-        for (let y = 0; y < this._playfield.rows; y++) {
-            playfield[y] = [];
-
-            for (let x = 0; x < this._playfield.columns; x++) {
-                playfield[y][x] = this._playfield[y][x];
-            }
-        }
-
-        for (let block of this.activePiece) {
-            if (block) {
-                playfield[block.y][block.x] = block;
-            }
-        }
-
-        return playfield;
+    reset() {
+        this._score = 0;
+        this._lines = 0;
+        this._topOut = false;
+        this._playfield.reset();
+        this._updatePieces();
     }
 
     movePieceLeft() {
-        this.activePiece.x -= 1;
+        this._activePiece.x -= 1;
 
-        if (this._playfield.hasCollision(this.activePiece)) {
-            this.activePiece.x += 1;
+        if (this._playfield.hasCollision(this._activePiece)) {
+            this._activePiece.x += 1;
         }
     }
 
     movePieceRight() {
-        this.activePiece.x += 1;
+        this._activePiece.x += 1;
 
-        if (this._playfield.hasCollision(this.activePiece)) {
-            this.activePiece.x -= 1;
+        if (this._playfield.hasCollision(this._activePiece)) {
+            this._activePiece.x -= 1;
         }
     }
 
     movePieceDown() {
-        if (this.topOut) return;
+        if (this._topOut) return;
 
-        this.activePiece.y += 1;
+        this._activePiece.y += 1;
 
-        if (this._playfield.hasCollision(this.activePiece)) {
-            this.activePiece.y -= 1;
+        if (this._playfield.hasCollision(this._activePiece)) {
+            this._activePiece.y -= 1;
             this._update();
         }
     }
 
     rotatePiece() {
-        this.activePiece.rotate();
+        this._activePiece.rotate();
 
-        if (this._playfield.hasCollision(this.activePiece)) {
-            this.activePiece.rotate(false);
+        if (this._playfield.hasCollision(this._activePiece)) {
+            this._activePiece.rotate(false);
         }
     }
 
@@ -85,29 +84,29 @@ export default class Game {
         this._updateScore();
         this._updatePieces();
 
-        if (this._playfield.hasCollision(this.activePiece)) {
-            this.topOut = true;
+        if (this._playfield.hasCollision(this._activePiece)) {
+            this._topOut = true;
         }
     }
 
     _updatePlayfield() {
-        this._playfield.lockPiece(this.activePiece);
+        this._playfield.lockPiece(this._activePiece);
     }
 
     _updateScore() {
         const clearedLines = this._playfield.clearLines();
 
         if (clearedLines > 0) {
-            this.score += Game.points[clearedLines] * (this.level + 1);
-            this.lines += clearedLines;
+            this._score += Game.points[clearedLines] * (this.level + 1);
+            this._lines += clearedLines;
         }
     }
 
     _updatePieces() {
-        this.activePiece = this.nextPiece ? this.nextPiece : Piece.createPiece();
-        this.nextPiece = Piece.createPiece();
-        
-        this.activePiece.x = Math.floor((this._playfield.columns - this.activePiece.width) / 2);
-        this.activePiece.y = -1;
+        this._activePiece = this._nextPiece || new Piece();
+        this._nextPiece = new Piece();
+        console.log('_updatePieces', this._activePiece, this._nextPiece)
+        this._activePiece.x = Math.floor((this._playfield.columns - this._activePiece.width) / 2);
+        this._activePiece.y = -1;
     }
 }
