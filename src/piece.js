@@ -1,67 +1,62 @@
 export default class Piece {
-    static types = 'IJLOSTZ';
-
-    static createPiece(type) {
-        if (!type) {
-            const index = Math.floor(Math.random() * this.types.length);
-            type = this.types[index];
-        }
-
-        switch (type) {
-            case 'I': return new Piece('I', [
-                [0,0,0,0],
-                [1,1,1,1],
-                [0,0,0,0],
-                [0,0,0,0]
-            ]);
-
-            case 'J': return new Piece('J', [
-                [0,0,0],
-                [1,1,1],
-                [0,0,1]
-            ]);
-
-            case 'L': return new Piece('L', [
-                [0,0,0],
-                [1,1,1],
-                [1,0,0]
-            ]);
-
-            case 'O': return new Piece('O', [
-                [0,0,0,0],
-                [0,1,1,0],
-                [0,1,1,0],
-                [0,0,0,0]
-            ]);
-
-            case 'S': return new Piece('S', [
-                [0,0,0],
-                [0,1,1],
-                [1,1,0]
-            ]);
-
-            case 'T': return new Piece('T', [
-                [0,0,0],
-                [1,1,1],
-                [0,1,0]
-            ]);
-
-            case 'Z': return new Piece('Z', [
-                [0,0,0],
-                [1,1,0],
-                [0,1,1]
-            ]);
-
-            default: throw new Error('Invalid peice type');
-        }
+    static blocks = {
+        'I': () => [
+            [0,0,0,0],
+            [1,1,1,1],
+            [0,0,0,0],
+            [0,0,0,0]
+        ],
+        'J': () => [
+            [0,0,0],
+            [1,1,1],
+            [0,0,1]
+        ],
+        'L': () => [
+            [0,0,0],
+            [1,1,1],
+            [1,0,0]
+        ],
+        'O':() => [
+            [0,0,0,0],
+            [0,1,1,0],
+            [0,1,1,0],
+            [0,0,0,0]
+        ],
+        'S': () => [
+            [0,0,0],
+            [0,1,1],
+            [1,1,0]
+        ],
+        'T': () => [
+            [0,0,0],
+            [1,1,1],
+            [0,1,0]
+        ],
+        'Z': () => [
+            [0,0,0],
+            [1,1,0],
+            [0,1,1]
+        ]
     }
 
-    x = 0;
-    y = 0;
+    static get types() {
+        return Object.keys(this.blocks);
+    }
 
-    constructor(type, blocks) {
+    static getRandomType() {
+        const index = Math.floor(Math.random() * this.types.length);
+        return this.types[index];
+    }
+
+    constructor(type = Piece.getRandomType(), x = 0, y = 0) {
+        if (!Piece.types.includes(type)) {
+            throw new Error('Invalid peice type');
+        }
+
         this.type = type;
-        this.blocks = blocks;
+        this.blocks = Piece.blocks[this.type]();
+        this.x = x;
+        this.y = y;
     }
 
     get width() {
