@@ -13,23 +13,24 @@ export default class View {
         this.element = element;
         this.width = width;
         this.height = height;
+
         this.canvas = document.createElement('canvas');
         this.canvas.width = this.width;
         this.canvas.height = this.height;
         this.context = this.canvas.getContext('2d');
 
-        this.gridBorderWidth = 4;
-        this.gridX = this.gridBorderWidth;
-        this.gridY = this.gridBorderWidth;
-        this.gridWidth = this.width * 2 / 3;
-        this.gridHeight = this.height;
-        this.gridInnerWidth = this.gridWidth - this.gridBorderWidth * 2;
-        this.gridInnerHeight = this.gridHeight - this.gridBorderWidth * 2;
+        this.playfieldBorderWidth = 4;
+        this.playfieldX = this.playfieldBorderWidth;
+        this.playfieldY = this.playfieldBorderWidth;
+        this.playfieldWidth = this.width * 2 / 3;
+        this.playfieldHeight = this.height;
+        this.playfieldInnerWidth = this.playfieldWidth - this.playfieldBorderWidth * 2;
+        this.playfieldInnerHeight = this.playfieldHeight - this.playfieldBorderWidth * 2;
 
-        this.blockWidth = this.gridInnerWidth / columns;
-        this.blockHeight = this.gridInnerHeight / rows;
+        this.blockWidth = this.playfieldInnerWidth / columns;
+        this.blockHeight = this.playfieldInnerHeight / rows;
 
-        this.panelX = this.gridWidth + 10;
+        this.panelX = this.playfieldWidth + 10;
         this.panelY = 0;
         this.panelWidth = this.width / 3;
         this.panelHeight = this.height;
@@ -51,7 +52,7 @@ export default class View {
 
     renderMainScreen(viewModel) {
         this._clearScreen();
-        this._renderGrid(viewModel);
+        this._renderPlayfield(viewModel);
         this._renderPanel(viewModel);
         this._renderBorder();
     }
@@ -69,6 +70,7 @@ export default class View {
 
     renderEndScreen({ score }) {
         this._clearScreen();
+
         this.context.fillStyle = 'white';
         this.context.font = '18px "Press Start 2P"';
         this.context.textAlign = 'center';
@@ -84,21 +86,21 @@ export default class View {
 
     _renderBorder() {
         this.context.strokeStyle = 'white';
-        this.context.lineWidth = this.gridBorderWidth;
-        this.context.strokeRect(0, 0, this.gridWidth, this.gridHeight);
+        this.context.lineWidth = this.playfieldBorderWidth;
+        this.context.strokeRect(0, 0, this.playfieldWidth, this.playfieldHeight);
     }
 
-    _renderGrid({ grid }) {
-        for (let y = 0; y < grid.length; y++) {
-            const line = grid[y];
+    _renderPlayfield({ playfield }) {
+        for (let y = 0; y < playfield.length; y++) {
+            const line = playfield[y];
 
             for (let x = 0; x < line.length; x++) {
-                const block = grid[y][x];
+                const block = playfield[y][x];
                 
                 if (block) {
                     this._renderBlock({
-                        x: this.gridX + (x * this.blockWidth),
-                        y: this.gridY + (y * this.blockHeight),
+                        x: this.playfieldX + (x * this.blockWidth),
+                        y: this.playfieldY + (y * this.blockHeight),
                         width: this.blockWidth,
                         height: this.blockHeight,
                         color: View.colors[block.type]

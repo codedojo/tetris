@@ -18,7 +18,7 @@ export default class Controller {
         const game = this._game;
 
         return {
-            grid: game.grid,
+            playfield: game.playfield,
             nextPiece: game.nextPiece,
             isGameOver: game.topOut,
             score: game.score,

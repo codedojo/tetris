@@ -1,4 +1,4 @@
-export default class Grid extends Array {
+export default class Playfield extends Array {
     constructor(rows, columns) {
         super();
 
