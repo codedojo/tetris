@@ -125,7 +125,6 @@ export default class View {
             width: this.blockWidth * 0.5,
             height: this.blockHeight * 0.5
         });
-        
     }
 
     _renderPiece(piece, { x, y, width = this.blockWidth, height = this.blockHeight }) {
