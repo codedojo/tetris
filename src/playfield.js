@@ -37,6 +37,14 @@ export default class Playfield extends Array {
         return this._removeLines(linesToRemove);
     }
 
+    reset() {
+        for (let i = 0; i < this.rows; i++) {
+            for (let j = 0; j < this.columns; j++) {
+                this[i][j] = 0;
+            }
+        }
+    }
+
     _getLinesToRemove() {
         let lines = [];
 
